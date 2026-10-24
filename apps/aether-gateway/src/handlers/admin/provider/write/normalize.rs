@@ -304,15 +304,16 @@ const QUOTA_QUERY_MAX_JSON_BYTES: usize = 64 * 1024;
 ///
 /// Shape:
 /// ```json
-/// { "script": "#{ request: #{ url: \"{{baseUrl}}/user/balance\" }, extractor: |response| #{ ... } }" }
+/// { "script": "#{ request: #{ url: \"https://api.example.com/user/balance\" }, extractor: |response| #{ ... } }" }
 /// ```
 ///
 /// The script is a Rhai snippet evaluated in a sandboxed engine (see
 /// `aether_admin::provider::ops::quota_script`); validation here compiles it
-/// and checks the `request` / `extractor` shape. `{{baseUrl}}` / `{{apiKey}}`
-/// placeholders in the request are resolved from the provider's endpoints and
-/// Provider Ops credentials at execution time; no secret is stored on the
-/// quota config itself. Returns `Ok(None)` for absent/null so callers drop it.
+/// and checks the `request` / `extractor` shape. `{{apiKey}}` / `{{api_key}}`
+/// placeholders in the request are resolved from the provider's Provider Ops
+/// credentials (falling back to the first usable pool key) at execution time;
+/// no secret is stored on the quota config itself. Returns `Ok(None)` for
+/// absent/null so callers drop it.
 pub(crate) fn normalize_quota_query_config(
     value: Option<serde_json::Value>,
 ) -> Result<Option<serde_json::Value>, String> {

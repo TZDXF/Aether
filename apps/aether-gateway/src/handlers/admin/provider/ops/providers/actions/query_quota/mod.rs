@@ -25,9 +25,8 @@ use serde_json::{Map, Value};
 use std::collections::BTreeMap;
 use std::time::Duration;
 
-pub(super) const ADMIN_PROVIDER_OPS_QUOTA_CACHE_PREFIX: &str = "provider_ops:quota:";
+pub(crate) const ADMIN_PROVIDER_OPS_QUOTA_CACHE_PREFIX: &str = "provider_ops:quota:";
 const ADMIN_PROVIDER_OPS_QUOTA_CACHE_TTL_SECS: u64 = 3_600;
-const ADMIN_PROVIDER_OPS_QUOTA_TIMEOUT_HINT: &str = "额度查询";
 
 pub(super) async fn admin_provider_ops_run_query_quota_action(
     state: &AdminAppState<'_>,
@@ -643,7 +642,7 @@ fn admin_provider_ops_network_error_message(error: &str) -> String {
 mod tests {
     use super::{
         build_quota_query_headers, substitute_quota_body_placeholders,
-        substitute_quota_placeholders, ADMIN_PROVIDER_OPS_QUOTA_TIMEOUT_HINT,
+        substitute_quota_placeholders,
     };
     use aether_admin::provider::ops::quota_script::QuotaScriptRequest;
     use serde_json::json;
@@ -651,10 +650,6 @@ mod tests {
 
     fn variables() -> BTreeMap<String, String> {
         let mut variables = BTreeMap::new();
-        variables.insert(
-            "baseUrl".to_string(),
-            "https://api.example.test".to_string(),
-        );
         variables.insert("apiKey".to_string(), "sk-secret".to_string());
         variables
     }
@@ -727,10 +722,5 @@ mod tests {
             substitute_quota_body_placeholders(&json!({ "key": "{{missing}}" }), &variables())
                 .expect_err("unknown placeholder should fail");
         assert!(error.contains("missing"), "unexpected error: {error}");
-    }
-
-    #[test]
-    fn timeout_hint_is_stable() {
-        assert_eq!(ADMIN_PROVIDER_OPS_QUOTA_TIMEOUT_HINT, "额度查询");
     }
 }

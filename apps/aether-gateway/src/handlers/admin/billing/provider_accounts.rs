@@ -1,5 +1,6 @@
 //! Current provider finance snapshots. This endpoint never calls upstream services.
 use super::build_admin_billing_data_unavailable_response;
+use crate::handlers::admin::provider::ops::providers::ADMIN_PROVIDER_OPS_QUOTA_CACHE_PREFIX;
 use crate::handlers::admin::request::{AdminAppState, AdminRequestContext};
 use crate::GatewayError;
 use axum::{
@@ -159,7 +160,7 @@ pub(super) async fn response(
         keys.push(format!("provider_ops:balance:{}", p.id));
     }
     for p in &providers {
-        keys.push(format!("provider_ops:quota:{}", p.id));
+        keys.push(format!("{ADMIN_PROVIDER_OPS_QUOTA_CACHE_PREFIX}{}", p.id));
     }
     let (cached, unavailable) = if keys.is_empty() {
         (Vec::new(), false)

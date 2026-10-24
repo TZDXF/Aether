@@ -1,4 +1,5 @@
 use super::value::build_admin_provider_summary_value;
+use crate::handlers::admin::provider::ops::providers::ADMIN_PROVIDER_OPS_QUOTA_CACHE_PREFIX;
 use crate::handlers::admin::request::AdminAppState;
 use crate::GatewayError;
 use aether_data_contracts::repository::provider_catalog::{
@@ -283,7 +284,9 @@ async fn read_custom_quota_cache(
 ) -> Option<serde_json::Value> {
     let raw = state
         .runtime_state()
-        .kv_get(&format!("provider_ops:quota:{provider_id}"))
+        .kv_get(&format!(
+            "{ADMIN_PROVIDER_OPS_QUOTA_CACHE_PREFIX}{provider_id}"
+        ))
         .await
         .ok()
         .flatten()?;
